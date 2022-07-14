@@ -1,0 +1,111 @@
+>>https://docs.nvidia.com/gameworks/content/developertools/desktop/analysis/report/cudaexperiments/kernellevel/achievedoccupancy.htm
+>>https://www.bu.edu/pasi/files/2011/07/Lecture2.pdf
+>>https://github.com/kevinzakka/learn-cuda/blob/master/chap4/notes.md
+>>http://lumetta.web.engr.illinois.edu/408-S20/ref/ECE408-S19-ZJUI-exam1-study-guide.pdf
+
+
+>>Question 1: Conditionals in Kernels
+-----------------------------------
+#define BLOCK_SIZE 16
+
+__global__ void 
+myKernel (float* A, float* B, int width, int height)
+{
+    int x = blockIdx.x * blockDim.x + threadIdx.x;
+    int y = blockIdx.y * blockDim.y + threadIdx.y;
+
+    if (width > x && height > y) {
+	B[y * width + x] = 100.0f * A[y * width + x] + 42.0f;
+    }
+}
+
+void
+launchMyKernel (float* A, float* B, int width, int height)
+{
+    dim3 dimGrid ((width + BLOCK_SIZE - 1) / BLOCK_SIZE,
+		  (height + BLOCK_SIZE - 1) / BLOCK_SIZE, 1);
+    dim3 dimBlock (BLOCK_SIZE, BLOCK_SIZE, 1);
+
+    myKernel<<<dimGrid,dimBlock>>> (A, B, width, height);
+}
+-----------------------------------
+if (width > x && height > y) {
+>>The conditional prevents threads from accessing memory outside of the A and B arrays.
+
+>>Question 2: Limits on Parallelism
+-----------------------------------
+One SM in a particular GPU supports at most 512 simultaneous threads, and at most 8 simultaneous thread blocks.
+
+Assuming that a kernel is launched with 73 threads in each thread block, how many threads (maximum) in the grid can execute simultaneously on one SM in the GPU described?
+
+A  
+threads
+
+If the same kernel is instead launched with 58 threads in each thread block, how many threads (maximum) in the grid can execute simultaneously on one SM in the GPU described?
+
+B  
+threads
+-----------------------------------
+>>511, 464
+
+>>Question 3: Warps in a Grid
+-----------------------------------
+After writing a kernel to process images, you launch the kernel on an image of  pixels with thread blocks organized as 2D  arrays of threads.
+
+How many warps are generated during execution of the kernel?
+
+-----------------------------------
+>>1480
+
+>>Question 4: Launching Kernels
+-----------------------------------
+After implementing your kernel for MP 2, you go to write the kernel launch. As you know, there are many ways to compute the number of thread blocks needed from the matrix size (grid, a dim3) and number of threads per block (TILE_WIDTHTILE_WIDTH).
+
+Which of the following grid dimension definitions are correct?
+
+
+dim3 dimGrid ((grid.x – 1) / TILE_WIDTH + 1, (grid.y – 1) / TILE_WIDTH + 1, 1)
+
+dim3 dimGrid ((grid.x + TILE_WIDTH – 1) / TILE_WIDTH, (grid.y + TILE_WIDTH – 1) / TILE_WIDTH, 1)
+
+dim3 dimGrid (ceil (grid.x /(float)TILE_WIDTH), ceil (grid.y /(float)TILE_WIDTH), 1)
+
+dim3 dimGrid (grid.x / TILE_WIDTH + (0 == (grid.x % TILE_WIDTH)), grid.y / TILE_WIDTH + (0 == (grid.y % TILE_WIDTH)), 1);
+Select all possible options that apply.
+-----------------------------------
+>>dim3 dimGrid ((grid.x – 1) / TILE_WIDTH + 1, (grid.y – 1) / TILE_WIDTH + 1, 1)
+>>dim3 dimGrid ((grid.x + TILE_WIDTH – 1) / TILE_WIDTH, (grid.y + TILE_WIDTH – 1) / TILE_WIDTH, 1)
+>>dim3 dimGrid (ceil (grid.x /(float)TILE_WIDTH), ceil (grid.y /(float)TILE_WIDTH), 1)
+
+>>Question 5: Matrix Multiplication Memory and Computation
+-----------------------------------
+Assume that the following matrix size specifications are passed to your matrix multiplication kernel in MP2:
+numARows=30
+numAColumns=28
+numBRows=28
+numBColumns=39
+numCRows=30
+numCColumns=39
+Remember that the matrices contain floats.
+
+How many Bytes are read from global memory by the kernel?
+
+A  
+integer
+Bytes
+
+How many Bytes are written to global memory by the kernel?
+
+B  
+integer
+Bytes
+
+How many floating-point operations are performed by the kernel?
+
+C  
+integer
+floating-point operations
+-----------------------------------
+>> 262080
+>> 4680
+>> 65520
