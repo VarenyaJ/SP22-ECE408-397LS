@@ -9,7 +9,7 @@ Some of my files from ECE 408 (Independent Study course ECE 397 under supervisio
 
 NOTICE
 -----
-If you are working on your own ECE 408 assingnment/lab/project, **MAKE SURE** you follow the academic integrity regulations and **consult your instructors** before referring to the work/code here. **DO NOT** copy the work/code without proper citation.
+If you are working on your own ECE 408 assignment/lab/project, **MAKE SURE** you follow the academic integrity regulations and **consult your instructors** before referring to the work/code here. **DO NOT** copy the work/code without proper citation.
 
 ACADEMIC INTEGRITY
 -----
